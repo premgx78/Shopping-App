@@ -22,6 +22,12 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We require camera access to connect to a call</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We require microphone access to connect to a call</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Allow access to photo library</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
