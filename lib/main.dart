@@ -9,7 +9,8 @@ import 'pages/product_detail.dart';
 import 'pages/login.dart';
 import 'pages/signup.dart';
 import 'Admin/admin_login.dart';
-
+import 'package:project1/Admin/add_product.dart';
+import 'pages/category_products.dart';
 void main()async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -43,7 +44,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: .fromSeed(seedColor: Colors.yellowAccent),
       ),
-      home: AdminLogin()
+      home: SignUp()
     );
   }
 }

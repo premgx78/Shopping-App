@@ -22,4 +22,11 @@ class AppWidget{
         fontSize: 22.0,
         fontWeight: FontWeight.bold);
   }
+
+  static TextStyle normalTextFieldStyle(){
+    return TextStyle(
+      color: Colors.black,
+      fontSize: 18.0,
+      fontWeight: FontWeight.w400);
+  }
 }

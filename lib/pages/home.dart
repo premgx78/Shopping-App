@@ -1,6 +1,8 @@
 import 'package:project1/widget/support_widget.dart';
-
 import 'package:flutter/material.dart';
+import 'package:project1/pages/category_products.dart';
+import 'package:project1/pages/services/shared_pref.dart';
+
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -19,11 +21,44 @@ class _HomeState extends State<Home> {
     "assets/images/Books.jpeg",
     "assets/images/Sports.jpeg"
   ];
+
+  List CategoryName = [
+    "Electronics",
+    "Clothes",
+    "Home & Appliances",
+    "Beauty",
+    "Books",
+    "Sports",
+  ];
+
+  String? name, image;
+
+  getthesharedpref()async{
+    name = await SharedPreferenceHelper().getUserName();
+    image = await SharedPreferenceHelper().getUserImage();
+    setState(() {
+
+    });
+  }
+
+  ontheload()async{
+    await getthesharedpref();
+    setState(() {
+
+    });
+  }
+
+  @override
+  void initState(){
+    ontheload();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xfff2f2f2),
-      body: Container(
+      body: name == null? Center(child: CircularProgressIndicator()): Container(
         margin: EdgeInsets.only(top: 50.0, left: 25.0, right : 20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,7 +69,7 @@ class _HomeState extends State<Home> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Hey, Prem",
+                    Text("Hey, "+name!,
                       style: TextStyle(color: Colors.redAccent,
                                         fontSize: 30,
                                         fontWeight: FontWeight.w600,),
@@ -48,7 +83,7 @@ class _HomeState extends State<Home> {
                 ),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(30),
-                  child: Image.asset("assets/images/Profile.jpeg", height: 60, width: 60, fit: BoxFit.cover,),
+                  child: Image.network(image!, height: 60, width: 60, fit: BoxFit.cover,),
                 )
               ],
             ),
@@ -95,7 +130,7 @@ class _HomeState extends State<Home> {
                         shrinkWrap: true,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index){
-                        return CategoryTile (image: categories [index]);
+                        return CategoryTile (image: categories [index], name: CategoryName[index],);
                         }),
                     ),
                 ),
@@ -361,27 +396,33 @@ class _HomeState extends State<Home> {
   }
 }
 class CategoryTile extends StatelessWidget {
-  String image;
-  CategoryTile({required this.image});
+  String image, name;
+  CategoryTile({required this.image, required this.name});
 
   @override
   Widget build(BuildContext context) {
-  return Container(
-    padding: EdgeInsets.all(20.0),
-    margin: EdgeInsets.only(right: 20),
-  decoration: BoxDecoration(
-  color: Colors.white,
-    borderRadius: BorderRadius.circular(15),
-  ),
-  height: 90,
-  width: 90,
-  child: Column(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-    Image.asset(image, height: 50, width: 50, fit: BoxFit.cover,),
-    SizedBox(height: 20.0,),
-    Icon(Icons.arrow_forward)
-  ],),
+  return GestureDetector(
+    onTap: (){
+      Navigator.push(context, MaterialPageRoute(builder: (context) => CategoryProduct(category: name)));
+    },
+    child: Container(
+      padding: EdgeInsets.all(20.0),
+      margin: EdgeInsets.only(right: 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+      ),
+      height: 90,
+      width: 90,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Image.asset(image, height: 50, width: 50, fit: BoxFit.cover,),
+          SizedBox(height: 20.0,),
+          Icon(Icons.arrow_forward)
+        ],
+      ),
+    )
   );
   }
   }
