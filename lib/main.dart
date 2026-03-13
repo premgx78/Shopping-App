@@ -11,8 +11,13 @@ import 'pages/signup.dart';
 import 'Admin/admin_login.dart';
 import 'package:project1/Admin/add_product.dart';
 import 'pages/category_products.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+
+const String publishablekey = "YOUR_STRIPE_PUBLISHABLE_KEY";
+
 void main()async {
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = publishablekey;
   await Firebase.initializeApp();
   runApp(const MyApp());
 }

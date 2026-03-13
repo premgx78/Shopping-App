@@ -425,4 +425,4 @@ class CategoryTile extends StatelessWidget {
     )
   );
   }
-  }
+}
