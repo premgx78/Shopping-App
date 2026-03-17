@@ -47,28 +47,30 @@ class _AddProductState extends State<AddProduct> {
       // TaskSnapshot snapshot = await task;
       // String downloadUrl = await snapshot.ref.getDownloadURL();
 
+      String firstletter = nameController.text.substring(0,1).toUpperCase();
+
       Map<String, dynamic> addProduct = {
         "Name": nameController.text,
         // "Image": downloadUrl,
+        "SearchKey": firstletter,
+        "UpdatedName": nameController.text.toUpperCase(),
         "Category": value,
         "Price": priceController.text,
         "Detail": detailController.text,
       };
 
-      await DatabaseMethods().addProduct(addProduct, value!);
-
-      setState(() {
+      await DatabaseMethods().addProduct(addProduct, value!).then((value) async{
+        await DatabaseMethods().addAllProducts(addProduct);
         selectedImage = null;
-        nameController.clear();
-        value = null;
+        nameController.text = "";
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.redAccent,
+          content: Text(
+            "Product has been upload Successfully!",
+            style: TextStyle(fontSize: 20.0),
+          )));
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Colors.green,
-          content: Text("Product has been uploaded Successfully!"),
-        ),
-      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

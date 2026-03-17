@@ -81,7 +81,9 @@ class _OrderState extends State<Order> {
                             children: [
                               Text(
                                 ds["Product"],
-                                style: AppWidget.semiBoldTextFieldStyle(),),
+                                style: AppWidget.semiBoldTextFieldStyle(),
+                              ),
+
                               Text(
                                 "\$" + ds["Price"],
                                 style: const TextStyle(

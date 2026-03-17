@@ -12,6 +12,7 @@ import 'Admin/admin_login.dart';
 import 'package:project1/Admin/add_product.dart';
 import 'pages/category_products.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'Admin/all_orders.dart';
 
 const String publishablekey = "YOUR_STRIPE_PUBLISHABLE_KEY";
 
@@ -49,7 +50,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: .fromSeed(seedColor: Colors.yellowAccent),
       ),
-      home: SignUp()
+      home: BottomNav()
     );
   }
 }
