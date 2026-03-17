@@ -41,7 +41,7 @@ class _CategoryProductState extends State<CategoryProduct> {
               gridDelegate:
               SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: 0.6,
+                  childAspectRatio: 0.68,
                   mainAxisSpacing: 10.0,
                   crossAxisSpacing: 10.0),
               itemCount: snapshot.data.docs.length,
@@ -60,11 +60,14 @@ class _CategoryProductState extends State<CategoryProduct> {
                   child: Column(
                     children: [
                       SizedBox(height: 10.0,),
-                      Image.network(
-                        ds["Image"],
-                        height: 120,
-                        width: 120,
-                        fit: BoxFit.cover,
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Image.network(
+                          ds["Image"],
+                          height: 120,
+                          width: 120,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                       SizedBox(height: 10),
                       Text(

@@ -53,17 +53,23 @@ userLogin()async{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: const Icon(Icons.arrow_back_ios_new_outlined),
+        ),
+        backgroundColor: Colors.white,
+      ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
       child: Container(
-        margin:  EdgeInsets.only(top: 33.0, left: 20.0, right: 20.0, bottom: 40.0),
+        margin:  EdgeInsets.only(left: 20.0, right: 20.0, bottom: 40.0),
         child: Form(
           key: _formkey,
           child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Image.asset("assets/images/CART.jpeg"),
-            SizedBox(height: 20.0),
             Center(
               child: Text(
                 "Sign In",

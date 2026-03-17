@@ -84,19 +84,24 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: const Icon(Icons.arrow_back_ios_new_outlined),
+        ),
+        backgroundColor: Colors.white,
+      ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Container(
           margin: const EdgeInsets.only(
-              top: 33, left: 20, right: 20, bottom: 40),
+              left: 20, right: 20, bottom: 40),
           child: Form(
             key: _formkey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Image.asset("assets/images/BAG.jpeg"),
-                const SizedBox(height: 20),
-
                 Center(
                   child: Text(
                     "Sign Up",

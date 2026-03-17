@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project1/pages/signup.dart';
 
 class Onboarding extends StatefulWidget {
   const Onboarding({super.key});
@@ -33,18 +34,23 @@ class _OnboardingState extends State<Onboarding> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Container(
-                  margin: EdgeInsets.only(right: 20.0),
-                  padding: EdgeInsets.all(20 ),
-                  decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(60)),
-                  child: Text(
-                    "Next",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 25.0,
-                        fontWeight: FontWeight.bold),
+                GestureDetector(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => SignUp()),);
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(right: 20.0),
+                    padding: EdgeInsets.all(20 ),
+                    decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(60)),
+                    child: Text(
+                      "Next",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 25.0,
+                          fontWeight: FontWeight.bold),
+                    ),
                   ),
-                )
+                ),
               ],
             )
           ],

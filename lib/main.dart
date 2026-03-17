@@ -13,6 +13,7 @@ import 'package:project1/Admin/add_product.dart';
 import 'pages/category_products.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'Admin/all_orders.dart';
+import 'Admin/home_admin.dart';
 
 const String publishablekey = "pk_test_51SzfixBYCPFHYKhK03jZH0mWDPv6fLOZGdxat8Y15fvu0uG9KcH7CCgayKfyYWhsS8gUr7ZIU44IfRnbqTmv1xHl00jlBCx0Rt";
 
@@ -50,7 +51,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: .fromSeed(seedColor: Colors.yellowAccent),
       ),
-      home: BottomNav()
+      home: Onboarding()
     );
   }
 }

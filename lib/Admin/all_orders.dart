@@ -81,7 +81,7 @@ class _AllOrdersState extends State<AllOrders> {
                                 ),
                                 const SizedBox(height: 3.0),
                                 Text(
-                                  ds["Product"],
+                                  ds["ProductName"],
                                   style: AppWidget.semiBoldTextFieldStyle(),
                                 ),
                                 const SizedBox(height: 3.0),

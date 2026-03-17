@@ -188,9 +188,7 @@ class _HomeState extends State<Home> {
                 )
               else ...[
                 // Categories Header
-                Padding(
-                  padding: const EdgeInsets.only(right: 20.0),
-                  child: Row(
+                Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text("Categories",
@@ -204,7 +202,6 @@ class _HomeState extends State<Home> {
                       )
                     ],
                   ),
-                ),
                 const SizedBox(height: 20.0),
 
                 // Categories Row

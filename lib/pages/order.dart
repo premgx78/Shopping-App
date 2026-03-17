@@ -61,13 +61,16 @@ class _OrderState extends State<Order> {
                       ),
                       child: Row(
                         children: [
-                          Image.network(
-                            ds["ProductImage"], // CHANGED
-                            height: 120,
-                            width: 120,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                            const Icon(Icons.broken_image, size: 60),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(15),
+                            child: Image.network(
+                              ds["ProductImage"], // CHANGED
+                              height: 120,
+                              width: 120,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.broken_image, size: 60),
+                            ),
                           ),
                           const Spacer(),
                           Padding(
@@ -76,7 +79,7 @@ class _OrderState extends State<Order> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  ds["Product"],
+                                  ds["ProductName"],
                                   style: AppWidget.semiBoldTextFieldStyle(),
                                 ),
                                 Text(
