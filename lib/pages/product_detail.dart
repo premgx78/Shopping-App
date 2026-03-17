@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:project1/pages/services/database.dart';
 import 'package:project1/pages/services/shared_pref.dart';
 
-const String secretkey = "YOUR_STRIPE_SECRET_KEY";
+const String secretkey = "sk_test_51SzfixBYCPFHYKhK516x58YwAuzY7qkUdzOumC88V62bqVtd74XHV1i4AjSnGU6HQ4WsEjkwyPvHRpIl6xdByGe900PyLVOwWT";
 
 class ProductDetail extends StatefulWidget {
   String image, name, detail, price;
@@ -168,12 +168,22 @@ class _ProductDetailState extends State<ProductDetail> {
 
   Future<void> makePayment(String amount) async {
     try {
-
       paymentIntent = await createPaymentIntent(amount, 'USD');
+
+      // ADD THIS: guard if payment intent creation failed
+      if (paymentIntent == null || paymentIntent!['client_secret'] == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.redAccent,
+            content: Text("Payment setup failed. Check your Stripe key."),
+          ),
+        );
+        return;
+      }
 
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
-          paymentIntentClientSecret: paymentIntent?['client_secret'],
+          paymentIntentClientSecret: paymentIntent!['client_secret'],
           style: ThemeMode.dark,
           merchantDisplayName: 'Prem',
         ),
@@ -248,9 +258,7 @@ class _ProductDetailState extends State<ProductDetail> {
   /// CREATE PAYMENT INTENT
 
   createPaymentIntent(String amount, String currency) async {
-
     try {
-
       Map<String, dynamic> body = {
         'amount': calculateAmount(amount),
         'currency': currency,
@@ -259,19 +267,41 @@ class _ProductDetailState extends State<ProductDetail> {
 
       var response = await http.post(
         Uri.parse('https://api.stripe.com/v1/payment_intents'),
-
         headers: {
           'Authorization': 'Bearer $secretkey',
           'Content-Type': 'application/x-www-form-urlencoded'
         },
-
         body: body,
       );
 
-      return jsonDecode(response.body);
+      // ADD THESE LINES to see exactly what Stripe returns
+      print("Stripe response code: ${response.statusCode}");
+      print("Stripe response body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        // Show the actual Stripe error on screen
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.redAccent,
+            content: Text("Stripe Error: ${jsonDecode(response.body)['error']['message']}"),
+            duration: Duration(seconds: 5),
+          ),
+        );
+        return null;
+      }
 
     } catch (err) {
       print('Error charging user: ${err.toString()}');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.redAccent,
+          content: Text("Network Error: ${err.toString()}"),
+          duration: Duration(seconds: 5),
+        ),
+      );
+      return null;
     }
   }
 
