@@ -13,13 +13,11 @@ class AllOrders extends StatefulWidget {
 class _AllOrdersState extends State<AllOrders> {
   Stream? orderStream;
 
-  getontheload()async{
+  getontheload() async {
     orderStream = await DatabaseMethods().allOrders();
-    setState(() {
-
-    });
+    setState(() {});
   }
-  
+
   @override
   void initState() {
     getontheload();
@@ -31,61 +29,62 @@ class _AllOrdersState extends State<AllOrders> {
         stream: orderStream,
         builder: (context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           return ListView.builder(
               padding: EdgeInsets.zero,
               itemCount: snapshot.data.docs.length,
               itemBuilder: (context, index) {
-                DocumentSnapshot ds =
-                snapshot.data.docs[index];
+                DocumentSnapshot ds = snapshot.data.docs[index];
 
                 return Container(
-                  margin: EdgeInsets.only(bottom: 20.0,),
+                  margin: const EdgeInsets.only(bottom: 20.0),
                   child: Material(
                     elevation: 3.0,
                     borderRadius: BorderRadius.circular(10),
                     child: Container(
-                      padding: EdgeInsets.only(left: 20.0, top: 10.0, bottom: 10.0,),
+                      padding: const EdgeInsets.only(left: 20.0, top: 10.0, bottom: 10.0),
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child:
-                      Row(
+                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Image.network(
-                            ds["Image"],
+                            ds["ProductImage"], // CHANGED
                             height: 120,
                             width: 120,
                             fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                            const Icon(Icons.broken_image, size: 60),
                           ),
-                          Spacer(),
-                          Padding(padding: const EdgeInsets.only(right: 20.0),
+                          const Spacer(),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 20.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Name : "+ds["Name"],
+                                  "Name : " + ds["Name"],
                                   style: AppWidget.semiBoldTextFieldStyle(),
                                 ),
-                                SizedBox(height: 3.0,),
+                                const SizedBox(height: 3.0),
                                 Container(
-                                  width: MediaQuery.of(context).size.width/2,
+                                  width: MediaQuery.of(context).size.width / 2,
                                   child: Text(
-                                    "Email : "+ds["Email"],
+                                    "Email : " + ds["Email"],
                                     style: AppWidget.semiBoldTextFieldStyle(),
                                   ),
                                 ),
-                                SizedBox(height: 3.0,),
+                                const SizedBox(height: 3.0),
                                 Text(
                                   ds["Product"],
                                   style: AppWidget.semiBoldTextFieldStyle(),
                                 ),
-                                  SizedBox(height: 3.0,),
+                                const SizedBox(height: 3.0),
                                 Text(
                                   "\$" + ds["Price"],
                                   style: const TextStyle(
@@ -93,25 +92,29 @@ class _AllOrdersState extends State<AllOrders> {
                                       fontSize: 23,
                                       fontWeight: FontWeight.bold),
                                 ),
-                                  SizedBox(height: 10.0,),
+                                const SizedBox(height: 10.0),
                                 GestureDetector(
-                                  onTap: ()async{
+                                  onTap: () async {
                                     await DatabaseMethods().updateStatus(ds.id);
-                                    setState(() {
-
-                                    });
+                                    setState(() {});
                                   },
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(vertical: 5.0),
+                                    padding: const EdgeInsets.symmetric(vertical: 5.0),
                                     width: 150,
                                     decoration: BoxDecoration(
-                                      color: Color(0xDF5F5FFF),
+                                      color: const Color(0xDF5F5FFF),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
-                                    child: Center(child: Text("Done", style: AppWidget.semiBoldTextFieldStyle(),),),
+                                    child: Center(
+                                      child: Text(
+                                        "Done",
+                                        style: AppWidget.semiBoldTextFieldStyle(),
+                                      ),
+                                    ),
                                   ),
                                 )
-                              ],),
+                              ],
+                            ),
                           )
                         ],
                       ),
@@ -125,13 +128,16 @@ class _AllOrdersState extends State<AllOrders> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("All Orders", style: AppWidget.boldTextFieldStyle(),),),
+      appBar: AppBar(
+        title: Text("All Orders", style: AppWidget.boldTextFieldStyle()),
+      ),
       body: Container(
         child: Column(
-        children: [
-          Expanded(child: allOrders(),)
-        ],
-      ),),
+          children: [
+            Expanded(child: allOrders()),
+          ],
+        ),
+      ),
     );
   }
 }

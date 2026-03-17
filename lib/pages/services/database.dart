@@ -10,8 +10,10 @@ class DatabaseMethods{
     return await FirebaseFirestore.instance.collection("Products").add(userInfoMap);
   }
 
-  Future addProduct(Map<String, dynamic> userInfoMap, String categoryName)async{
-    return await FirebaseFirestore.instance.collection(categoryName).add(userInfoMap);
+  Future addProduct(Map<String, dynamic> product, String category) async {
+    return await FirebaseFirestore.instance
+        .collection(category)
+        .add(product);
   }
 
   updateStatus(String id)async{

@@ -36,9 +36,7 @@ class _HomeState extends State<Home> {
   List tempSearchStore = [];
 
   initiateSearch(String value) async {
-    var capitalizedValue =
-        value.substring(0, 1).toUpperCase() + value.substring(1);
-
+    // Guard against empty string FIRST before any substring call
     if (value.isEmpty) {
       setState(() {
         search = false;
@@ -48,11 +46,13 @@ class _HomeState extends State<Home> {
       return;
     }
 
+    var capitalizedValue =
+        value.substring(0, 1).toUpperCase() + value.substring(1);
+
     setState(() {
       search = true;
     });
 
-    // Firestore search only on first letter typed
     if (queryResultSet.isEmpty && value.length == 1) {
       QuerySnapshot snapshot =
       await DatabaseMethods().search(capitalizedValue);
@@ -61,7 +61,6 @@ class _HomeState extends State<Home> {
           .toList();
     }
 
-    // Filter the results
     tempSearchStore = queryResultSet.where((element) {
       return element['UpdatedName']
           .toString()
@@ -101,7 +100,6 @@ class _HomeState extends State<Home> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -137,7 +135,6 @@ class _HomeState extends State<Home> {
               ],
             ),
             const SizedBox(height: 25.0),
-            // Search Field
             Container(
               decoration: BoxDecoration(
                   color: Colors.white,
@@ -162,7 +159,6 @@ class _HomeState extends State<Home> {
               ),
             ),
             const SizedBox(height: 20.0),
-            // Search Results or Categories
             search
                 ? Expanded(
               child: ListView(
@@ -176,7 +172,6 @@ class _HomeState extends State<Home> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Categories Header
                   Padding(
                     padding: const EdgeInsets.only(right: 20.0),
                     child: Row(
@@ -235,7 +230,6 @@ class _HomeState extends State<Home> {
                     ],
                   ),
                   const SizedBox(height: 20.0),
-                  // All Products Header
                   Row(
                     mainAxisAlignment:
                     MainAxisAlignment.spaceBetween,
@@ -253,7 +247,6 @@ class _HomeState extends State<Home> {
                     ],
                   ),
                   const SizedBox(height: 20.0),
-                  // Products List
                   Expanded(
                     child: ListView(
                       scrollDirection: Axis.horizontal,
@@ -281,10 +274,12 @@ class _HomeState extends State<Home> {
       child: Row(
         children: [
           Image.network(
-            data["Image"],
+            data["Image"] ?? "", // CHANGED: null-safe
             height: 50,
             width: 50,
             fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) =>
+            const Icon(Icons.broken_image, size: 50), // CHANGED: error fallback
           ),
           const SizedBox(width: 10),
           Text(
@@ -371,6 +366,7 @@ class CategoryTile extends StatelessWidget {
               const Icon(Icons.arrow_forward)
             ],
           ),
-        ));
+        )
+    );
   }
 }

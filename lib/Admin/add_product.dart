@@ -1,6 +1,3 @@
-import 'dart:io';
-import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:project1/widget/support_widget.dart';
@@ -14,44 +11,26 @@ class AddProduct extends StatefulWidget {
 }
 
 class _AddProductState extends State<AddProduct> {
-  final ImagePicker _picker = ImagePicker();
-  File? selectedImage;
   TextEditingController nameController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController detailController = TextEditingController();
+  TextEditingController imageUrlController = TextEditingController(); // NEW
 
   String? value;
   final List<String> categoryitem = [
     'Electronics', 'Clothes', 'Home & Appliances', 'Beauty', 'Books', 'Sports'
   ];
 
-  // Pick image from gallery
-  Future<void> getImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      setState(() {
-        selectedImage = File(image.path);
-      });
-    }
-  }
-
   // Upload product to Firebase
   Future<void> uploadItem() async {
-    if (selectedImage != null && nameController.text.isNotEmpty && value != null) {
-      String addId = DateTime.now().millisecondsSinceEpoch.toString();
-
-      // Reference firebaseStorageRef =
-      // FirebaseStorage.instance.ref().child("blogImage").child(addId);
-      // UploadTask task = firebaseStorageRef.putFile(selectedImage!);
-      //
-      // TaskSnapshot snapshot = await task;
-      // String downloadUrl = await snapshot.ref.getDownloadURL();
-
-      String firstletter = nameController.text.substring(0,1).toUpperCase();
+    if (imageUrlController.text.isNotEmpty &&
+        nameController.text.isNotEmpty &&
+        value != null) {
+      String firstletter = nameController.text.substring(0, 1).toUpperCase();
 
       Map<String, dynamic> addProduct = {
         "Name": nameController.text,
-        // "Image": downloadUrl,
+        "Image": imageUrlController.text.trim(), // CHANGED: store URL directly
         "SearchKey": firstletter,
         "UpdatedName": nameController.text.toUpperCase(),
         "Category": value,
@@ -59,23 +38,28 @@ class _AddProductState extends State<AddProduct> {
         "Detail": detailController.text,
       };
 
-      await DatabaseMethods().addProduct(addProduct, value!).then((value) async{
+      await DatabaseMethods().addProduct(addProduct, value!).then((val) async {
         await DatabaseMethods().addAllProducts(addProduct);
-        selectedImage = null;
+        imageUrlController.text = "";
         nameController.text = "";
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        priceController.text = "";
+        detailController.text = "";
+        setState(() {
+          value = null;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           backgroundColor: Colors.redAccent,
           content: Text(
-            "Product has been upload Successfully!",
+            "Product has been uploaded Successfully!",
             style: TextStyle(fontSize: 20.0),
-          )));
+          ),
+        ));
       });
-
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: Colors.redAccent,
-          content: Text("Please fill all fields and select an image"),
+          content: Text("Please fill all fields and provide an image URL"),
         ),
       );
     }
@@ -93,29 +77,51 @@ class _AddProductState extends State<AddProduct> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20,),
+          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Upload The Product Image", style: AppWidget.lightTextFieldStyle()),
+
+              // IMAGE URL INPUT (replaces image picker)
+              Text("Product Image URL", style: AppWidget.lightTextFieldStyle()),
               const SizedBox(height: 20),
-              GestureDetector(
-                onTap: getImage,
-                child: Center(
-                  child: Container(
-                    height: 150,
-                    width: 150,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black, width: 1.5),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: selectedImage != null
-                        ? ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image.file(selectedImage!, fit: BoxFit.cover),
-                    )
-                        : const Icon(Icons.camera_alt_outlined),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFececf8),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: TextField(
+                  controller: imageUrlController,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: "Paste image URL here...",
                   ),
+                  onChanged: (_) => setState(() {}), // refresh preview
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // IMAGE PREVIEW
+              Center(
+                child: Container(
+                  height: 150,
+                  width: 150,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black, width: 1.5),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: imageUrlController.text.trim().isNotEmpty
+                      ? ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.network(
+                      imageUrlController.text.trim(),
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.broken_image, size: 50),
+                    ),
+                  )
+                      : const Icon(Icons.image_outlined, size: 50),
                 ),
               ),
 
@@ -203,7 +209,7 @@ class _AddProductState extends State<AddProduct> {
             ],
           ),
         ),
-      )
+      ),
     );
   }
 }
