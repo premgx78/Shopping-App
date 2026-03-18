@@ -164,9 +164,9 @@ class _ProfileState extends State<Profile> {
                     decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15)),
                     child: Row(
                       children: [
-                        Icon(Icons.logout, size: 35,),
+                        Icon(Icons.delete_outlined, size: 35,),
                         SizedBox(width: 10.0,),
-                        Text("LogOut", style: AppWidget.semiBoldTextFieldStyle(),),
+                        Text("Delete", style: AppWidget.semiBoldTextFieldStyle(),),
                         Spacer(),
                         Icon(Icons.arrow_forward_ios_outlined),
                       ],

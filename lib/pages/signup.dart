@@ -23,36 +23,48 @@ class _SignUpState extends State<SignUp> {
 
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
+  bool _obscurePassword = true;
+
   Future<void> registration() async {
     if (name != null && email != null && password != null) {
       try {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        UserCredential userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
           email: email!,
           password: password!,
         );
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            backgroundColor: Colors.green,
-            content: Text(
-              "Registered Successfully...",
-              style: TextStyle(fontSize: 18),
-            ),
-          ),
-        );
-        String Id = randomAlphaNumeric(10);
+        // CHANGED: use Firebase Auth UID instead of random string
+        String Id = userCredential.user!.uid;
+
         await SharedPreferenceHelper().saveUserEmail(emailController.text);
         await SharedPreferenceHelper().saveUserId(Id);
         await SharedPreferenceHelper().saveUserName(nameController.text);
-        await SharedPreferenceHelper().saveUserImage("https://img.freepik.com/premium-vector/boy-with-blue-hoodie-blue-hoodie-with-hoodie-it_1230457-42660.jpg?semt=ais_user_personalization&w=740&q=80");
+        await SharedPreferenceHelper().saveUserImage(
+            "https://img.freepik.com/premium-vector/boy-with-blue-hoodie-blue-hoodie-with-hoodie-it_1230457-42660.jpg?semt=ais_user_personalization&w=740&q=80");
+
         Map<String, dynamic> userInfoMap = {
-          "Name" : nameController.text,
-          "Email" : emailController.text,
-          "Id" : Id,
-          "Image" : "https://img.freepik.com/premium-vector/boy-with-blue-hoodie-blue-hoodie-with-hoodie-it_1230457-42660.jpg?semt=ais_user_personalization&w=740&q=80",
+          "Name": nameController.text,
+          "Email": emailController.text,
+          "Id": Id,
+          "Password": passwordController,
+          "Image": "https://img.freepik.com/premium-vector/boy-with-blue-hoodie-blue-hoodie-with-hoodie-it_1230457-42660.jpg?semt=ais_user_personalization&w=740&q=80",
         };
+
+        // CHANGED: save to Firestore using UID so login can find it
         await DatabaseMethods().addUserDetails(userInfoMap, Id);
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>BottomNav()),);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.green,
+            content: Text("Registered Successfully...",
+                style: TextStyle(fontSize: 18)),
+          ),
+        );
+
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => BottomNav()));
+
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -182,16 +194,27 @@ class _SignUpState extends State<SignUp> {
                   ),
                   child: TextFormField(
                     controller: passwordController,
-                    obscureText: true,
+                    obscureText: _obscurePassword, // CHANGED
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your Password';
                       }
                       return null;
                     },
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: "Password",
+                      suffixIcon: IconButton( // ADDED
+                        icon: Icon(
+                          _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
                     ),
                   ),
                 ),
