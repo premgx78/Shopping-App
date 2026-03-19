@@ -33,7 +33,6 @@ class _ProductDetailState extends State<ProductDetail> {
     name = await SharedPreferenceHelper().getUserName();
     mail = await SharedPreferenceHelper().getUserEmail();
     image = await SharedPreferenceHelper().getUserImage();
-
     setState(() {});
   }
 
@@ -89,72 +88,76 @@ class _ProductDetailState extends State<ProductDetail> {
                   ),
                 ),
                 width: MediaQuery.of(context).size.width,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
 
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                      /// Product Name + Price
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              widget.name,
+                              style: AppWidget.boldTextFieldStyle(),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            "\$${widget.price}",
+                            style: const TextStyle(
+                                color: Color(0xDF5F5FFF),
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      ),
 
-                    /// Product Name + Price
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          widget.name,
-                          style: AppWidget.boldTextFieldStyle(),
-                        ),
+                      const SizedBox(height: 20),
 
-                        Text(
-                          "\$${widget.price}",
-                          style: const TextStyle(
-                              color: Color(0xDF5F5FFF),
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    ),
+                      Text(
+                        "Details",
+                        style: AppWidget.semiBoldTextFieldStyle(),
+                      ),
 
-                    const SizedBox(height: 20),
+                      const SizedBox(height: 10),
 
-                    Text(
-                      "Details",
-                      style: AppWidget.semiBoldTextFieldStyle(),
-                    ),
+                      Text(widget.detail),
 
-                    const SizedBox(height: 10),
+                      const SizedBox(height: 30),
 
-                    Text(widget.detail),
-
-                    const SizedBox(height: 100),
-
-                    /// BUY BUTTON
-                    GestureDetector(
-                      onTap: () {
-                        makePayment(widget.price);
-                      },
-
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        decoration: BoxDecoration(
-                          color: const Color(0xDF5F5FFF),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-
-                        width: MediaQuery.of(context).size.width,
-
-                        child: const Center(
-                          child: Text(
-                            "Buy Now",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                      /// BUY BUTTON
+                      GestureDetector(
+                        onTap: () {
+                          makePayment(widget.price);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          decoration: BoxDecoration(
+                            color: const Color(0xDF5F5FFF),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          width: MediaQuery.of(context).size.width,
+                          child: const Center(
+                            child: Text(
+                              "Buy Now",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
 
-                  ],
+                      const SizedBox(height: 20),
+
+                    ],
+                  ),
                 ),
               ),
             )
@@ -170,7 +173,6 @@ class _ProductDetailState extends State<ProductDetail> {
     try {
       paymentIntent = await createPaymentIntent(amount, 'USD');
 
-      // ADD THIS: guard if payment intent creation failed
       if (paymentIntent == null || paymentIntent!['client_secret'] == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -204,7 +206,6 @@ class _ProductDetailState extends State<ProductDetail> {
       await Stripe.instance.presentPaymentSheet();
 
       /// SAVE ORDER
-
       Map<String, dynamic> orderInfoMap = {
         "ProductName": widget.name,
         "Price": widget.price,
@@ -218,14 +219,12 @@ class _ProductDetailState extends State<ProductDetail> {
       await DatabaseMethods().orderDetails(orderInfoMap);
 
       /// SUCCESS DIALOG
-
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: const [
-
               Row(
                 children: [
                   Icon(Icons.check_circle, color: Colors.green),
@@ -233,7 +232,6 @@ class _ProductDetailState extends State<ProductDetail> {
                   Text("Payment Successful"),
                 ],
               )
-
             ],
           ),
         ),
@@ -242,14 +240,12 @@ class _ProductDetailState extends State<ProductDetail> {
       paymentIntent = null;
 
     } on StripeException catch (e) {
-
       showDialog(
         context: context,
         builder: (_) => const AlertDialog(
           content: Text("Payment Cancelled"),
         ),
       );
-
     } catch (e) {
       print(e);
     }
@@ -274,19 +270,17 @@ class _ProductDetailState extends State<ProductDetail> {
         body: body,
       );
 
-      // ADD THESE LINES to see exactly what Stripe returns
       print("Stripe response code: ${response.statusCode}");
       print("Stripe response body: ${response.body}");
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
-        // Show the actual Stripe error on screen
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: Colors.redAccent,
             content: Text("Stripe Error: ${jsonDecode(response.body)['error']['message']}"),
-            duration: Duration(seconds: 5),
+            duration: const Duration(seconds: 5),
           ),
         );
         return null;
@@ -298,7 +292,7 @@ class _ProductDetailState extends State<ProductDetail> {
         SnackBar(
           backgroundColor: Colors.redAccent,
           content: Text("Network Error: ${err.toString()}"),
-          duration: Duration(seconds: 5),
+          duration: const Duration(seconds: 5),
         ),
       );
       return null;

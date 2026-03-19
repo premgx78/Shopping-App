@@ -34,7 +34,6 @@ class _SignUpState extends State<SignUp> {
           password: password!,
         );
 
-        // CHANGED: use Firebase Auth UID instead of random string
         String Id = userCredential.user!.uid;
 
         await SharedPreferenceHelper().saveUserEmail(emailController.text);

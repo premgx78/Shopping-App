@@ -41,7 +41,7 @@ class _CategoryProductState extends State<CategoryProduct> {
               gridDelegate:
               SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: 0.68,
+                  childAspectRatio: 0.65,
                   mainAxisSpacing: 10.0,
                   crossAxisSpacing: 10.0),
               itemCount: snapshot.data.docs.length,
